@@ -1,0 +1,99 @@
+# -----------------------------------
+# ignore vue-related files
+# -----------------------------------
+npm-debug.log
+node_modules
+.project
+.vscode
+.history
+.DS_Store
+\.settings/
+build/env.js
+dist/
+admin.html
+
+# -----------------------------------
+# ignore java-related files
+# -----------------------------------
+# project
+
+upload-dir/
+
+*.jar
+*.bak
+
+*.sw?
+.#*
+*#
+*~
+.classpath
+.project
+.settings
+.classpath
+./lib/
+./src/main/webapp/WEB-INF/lib
+./.metadata/
+bin
+log
+db/
+out/
+target/
+temp/
+tmp/
+obsolate/
+site-mvc/
+libopensvc/
+
+dependency-reduced-pom.xml
+*.sublime-*
+/scratch
+.gradle
+.idea
+
+*.iml
+README.html
+
+#---------------
+# windows
+
+**/.db
+
+
+#---------------
+# mac os x
+
+**/.DS_Store
+
+# Thumbnails
+**/._*
+
+# Files that might appear on external disk
+**/.Spotlight-V100
+**/.Trashes
+/svc_node/Data
+/svc_node/doc
+/svc_node/lib
+/svc_node/libsvc-node-client
+/svc_node/service/Data
+/svc_node/service/lib
+Data
+
+nohup.out
+
+
+# -----------------------------------
+# ignore python-related files
+# -----------------------------------
+
+
+logs/
+h5/
+
+train/
+test/
+
+*.pyc
+*.h5
+*.tgz
+*.out
+*.jpg
