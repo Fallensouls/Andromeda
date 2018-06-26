@@ -17,6 +17,8 @@ public abstract class BasicService<T> {
 
     private JdbcTemplate jdbcTemplate;
     private String tableName;
+    // 此处使用的数据库为postgre9.5，如需使用MySQL 请按照jooq给出的API用法自行修改
+    // 如public static final SQLDialect dialect=SQLDialect.MYSQL_8_0
     private static final SQLDialect dialect=SQLDialect.POSTGRES_9_5;
 
     public void setDataSource(DataSource dataSource){
