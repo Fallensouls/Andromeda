@@ -1,0 +1,9 @@
+hello\service\user\User.class
+hello\MainApplication.class
+hello\init\JxCustomConfigure.class
+hello\init\JxAppFoundation.class
+hello\io\UserController.class
+hello\foundation\BasicService.class
+META-INF\spring-configuration-metadata.json
+hello\service\user\UserService.class
+hello\service\JxAppService.class

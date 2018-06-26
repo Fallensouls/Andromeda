@@ -1,0 +1,63 @@
+{
+  "hints": [],
+  "groups": [
+    {
+      "sourceType": "hello.init.JxCustomConfigure",
+      "name": "uvlab.foundation.node",
+      "type": "hello.init.JxCustomConfigure"
+    }
+  ],
+  "properties": [
+    {
+      "sourceType": "hello.init.JxCustomConfigure",
+      "name": "uvlab.foundation.node.data-root",
+      "description": "data root folder",
+      "type": "java.lang.String"
+    },
+    {
+      "sourceType": "hello.init.JxCustomConfigure",
+      "name": "uvlab.foundation.node.data-temp",
+      "description": "data tmp save folder",
+      "type": "java.lang.String"
+    },
+    {
+      "sourceType": "hello.init.JxCustomConfigure",
+      "name": "uvlab.foundation.node.dataset-node",
+      "description": "dataset root node id",
+      "type": "java.lang.String"
+    },
+    {
+      "sourceType": "hello.init.JxCustomConfigure",
+      "name": "uvlab.foundation.node.file-node-md-url",
+      "type": "java.lang.String"
+    },
+    {
+      "sourceType": "hello.init.JxCustomConfigure",
+      "name": "uvlab.foundation.node.file-node-url",
+      "type": "java.lang.String"
+    },
+    {
+      "sourceType": "hello.init.JxCustomConfigure",
+      "name": "uvlab.foundation.node.kafka-bootstrap-servers",
+      "description": "kafka server cluster host:port pairs",
+      "type": "java.lang.String"
+    },
+    {
+      "sourceType": "hello.init.JxCustomConfigure",
+      "name": "uvlab.foundation.node.news-picture",
+      "description": "news picture save path",
+      "type": "java.lang.String"
+    },
+    {
+      "sourceType": "hello.init.JxCustomConfigure",
+      "name": "uvlab.foundation.node.node-url",
+      "description": "wiki picture save path",
+      "type": "java.lang.String"
+    },
+    {
+      "sourceType": "hello.init.JxCustomConfigure",
+      "name": "uvlab.foundation.node.wiki-picture",
+      "type": "java.lang.String"
+    }
+  ]
+}
