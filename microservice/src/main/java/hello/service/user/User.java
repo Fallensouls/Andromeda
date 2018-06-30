@@ -14,6 +14,8 @@ public class User {
     private short rowstate = 0;  //定义默认值为0
     @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss",timezone = "GMT+8")
     private Date crtdate; //创建日期
+    @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss",timezone = "GMT+8")
+    private Date upddate; //修改日期
 
     public UUID getId() {
         return id;
@@ -69,5 +71,13 @@ public class User {
 
     public void setCrtdate(Date crtdate) {
         this.crtdate = crtdate;
+    }
+
+    public Date getUpddate() {
+        return upddate;
+    }
+
+    public void setUpddate(Date upddate) {
+        this.upddate = upddate;
     }
 }

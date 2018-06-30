@@ -1,12 +1,11 @@
 package hello.io;
 
-import hello.service.JxAppService;
 import hello.service.user.User;
 import hello.service.user.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
-import javax.servlet.http.HttpServletResponse;
-import java.io.IOException;
+import org.springframework.security.access.prepost.PostAuthorize;
+import org.springframework.security.access.prepost.PreAuthorize;
 
 import java.util.HashMap;
 import java.util.List;
@@ -15,15 +14,13 @@ import java.util.List;
 @RestController
 @RequestMapping(value = "/user")
 public class UserController {
-
-    private UserService userService;
     @Autowired
-    public UserController(JxAppService svc) {
-        this.userService = svc.getUserService();
-    }
+    private UserService userService;
 
-    @CrossOrigin(origins = "*")
+
+//    @CrossOrigin(origins = "*")
     @RequestMapping(method = RequestMethod.GET)
+    @PreAuthorize("hasRole('ADMIN')")
     public List<User> getUserList(@RequestParam(value = "name" ,required = false) String name,
                                      @RequestParam(value = "objectstate" ,required = false) String objectstate,
                                      @RequestParam(value = "crtbeg" ,required = false) String crtbeg,
@@ -39,8 +36,9 @@ public class UserController {
         return  userService.findList(params,User.class);
     }
 
-    @CrossOrigin(origins = "*")
+//    @CrossOrigin(origins = "*")
     @RequestMapping(value = "/count",method = RequestMethod.GET)
+    @PreAuthorize("hasRole('ADMIN')")
     public long getCount(@RequestParam(value = "name" ,required = false) String name,
                          @RequestParam(value = "objectstate" ,required = false) String objectstate,
                          @RequestParam(value = "crtbeg" ,required = false) String crtbeg,
@@ -51,30 +49,36 @@ public class UserController {
         return userService.getCount(params);
     }
 
-    @CrossOrigin(origins = "*")
+//    @CrossOrigin(origins = "*")
     @RequestMapping(method = RequestMethod.POST)
+    @PreAuthorize("hasRole('ADMIN')")
     public User addUser(@RequestBody User user){
         HashMap<String, Object> params = userService.getProperties(user);
-        return userService.addRow(User.class,params);
+        String userid = (String)params.get("id");
+        userService.addAuthForUser(userid,1); //新注册的用户设为普通用户
+        return userService.addRowByUUID(User.class,params);
     }
 
-    @CrossOrigin(origins = "*")
+//    @CrossOrigin(origins = "*")
     @RequestMapping(value = "/{id}",method = RequestMethod.GET)
+    @PostAuthorize("returnObject.username == principal.username or hasRole('ROLE_ADMIN')")
     public User getUserById(@PathVariable(value = "id")String id){
-        return userService.getRowById(id,User.class);
+        return userService.getRowByUUID(id,User.class);
     }
 
-    @CrossOrigin(origins = "*")
+//    @CrossOrigin(origins = "*")
     @RequestMapping(value = "/{id}",method = RequestMethod.DELETE)
+    @PreAuthorize("hasRole('ADMIN')")
     public void deleteUser(@PathVariable(value = "id")String id){
-        userService.removeRow(id);
+        userService.removeRowByUUID(id);
     }
 
-    @CrossOrigin(origins = "*")
+//    @CrossOrigin(origins = "*")
     @RequestMapping(value = "/{id}",method = RequestMethod.PUT)
+    @PreAuthorize("hasRole('ADMIN')")
     public void updateUser(@PathVariable(value = "id")String id,
                               @RequestBody User user){
         HashMap<String, Object> params = userService.getProperties(user);
-        userService.updateRow(id,params);
+        userService.updateRowByID(id,params);
     }
 }

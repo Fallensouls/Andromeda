@@ -21,11 +21,15 @@ public abstract class BasicService<T> {
     // 如public static final SQLDialect dialect=SQLDialect.MYSQL_8_0
     private static final SQLDialect dialect=SQLDialect.POSTGRES_9_5;
 
-    public void setDataSource(DataSource dataSource){
+    protected void setDataSource(DataSource dataSource){
         this.jdbcTemplate = new JdbcTemplate(dataSource); //初始化jdbc
     }
 
-    public void setTableName(String name){
+    protected JdbcTemplate getJdbcTemplate() {
+        return jdbcTemplate;
+    }
+
+    protected void setTableName(String name){
         this.tableName = name;
     }
 
@@ -58,7 +62,7 @@ public abstract class BasicService<T> {
     }
 
 
-    public T getRowById(String id, Class<T> clazz){
+    public T getRowByUUID(String id, Class<T> clazz){
         T ret = null;
         String sql = "SELECT * FROM " + this.tableName + " where id=?";
         try {
@@ -70,14 +74,33 @@ public abstract class BasicService<T> {
         return ret;
     }
 
-    public void removeRow(String id) {
+    public T getRowByID(String id, Class<T> clazz){
+        T ret = null;
+        String sql = "SELECT * FROM " + this.tableName + " where id=?";
+        try {
+            ret=jdbcTemplate.queryForObject(sql, new Object[]{Integer.parseInt(id)}, new BeanPropertyRowMapper<>(clazz));
+        }
+        catch (Exception e){
+            System.out.println(e.getMessage());
+        }
+        return ret;
+    }
+
+    public void removeRowByUUID(String id) {
         String sql = "UPDATE "+ this.tableName +" SET rowstate=1 WHERE id=?";
         jdbcTemplate.update(sql,UUID.fromString(id));
     }
 
-    public void updateRow(String id, Map<String, Object> params){
-        params.remove("id");
-        params.remove("crtdate");  //移除掉不允许修改的部分
+    public void removeRowByID(String id) {
+        String sql = "UPDATE "+ this.tableName +" SET rowstate=1 WHERE id=?";
+        jdbcTemplate.update(sql,Integer.parseInt(id));
+    }
+
+    public void updateRowByID(String id, Map<String, Object> params){
+        params.remove("id");  //移除掉不允许修改的部分
+        if(params.containsKey("crtdate")){
+            params.remove("crtdate");
+        }
         DSLContext create= DSL.using(dialect);
         HashMap<Field<?>,Field<?>> sets=new HashMap<>();
         for (Object o : params.entrySet()) {
@@ -93,7 +116,7 @@ public abstract class BasicService<T> {
         jdbcTemplate.update(sql);
     }
 
-    public T addRow(Class<T> clazz,Map<String, Object> params){
+    public T addRowByUUID(Class<T> clazz,Map<String, Object> params){
         DSLContext create = DSL.using(SQLDialect.POSTGRES_9_5);
         List<Field<?>> columns = new ArrayList<>();
         List<Field<?>> values = new ArrayList<>();
@@ -113,6 +136,28 @@ public abstract class BasicService<T> {
         jdbcTemplate.update(sql);
         sql = "SELECT * FROM " + this.tableName + " where id=?";
         return jdbcTemplate.queryForObject(sql, new Object[]{UUID.fromString(id)}, new BeanPropertyRowMapper<>(clazz));
+    }
+
+    public T addRowByID(Class<T> clazz,Map<String, Object> params){
+        DSLContext create = DSL.using(SQLDialect.POSTGRES_9_5);
+        List<Field<?>> columns = new ArrayList<>();
+        List<Field<?>> values = new ArrayList<>();
+        String id = (String)params.get("id");
+
+        for (Object o : params.entrySet()) {
+            Map.Entry entry = (Map.Entry) o;
+            String key = (String) entry.getKey();
+            Object val = entry.getValue();
+            if (val == null) {
+                continue;
+            }
+            columns.add(DSL.field(key));
+            values.add(DSL.inline(val));
+        }
+        String sql=create.insertInto(DSL.table(this.tableName)).columns(columns).values(values).getSQL();
+        jdbcTemplate.update(sql);
+        sql = "SELECT * FROM " + this.tableName + " where id=?";
+        return jdbcTemplate.queryForObject(sql, new Object[]{Integer.parseInt(id)}, new BeanPropertyRowMapper<>(clazz));
     }
 
     private SelectConditionStep getDSL(SelectSelectStep select,Map<String,Object> params) {
