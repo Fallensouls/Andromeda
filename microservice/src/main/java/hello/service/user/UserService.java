@@ -1,7 +1,7 @@
 package hello.service.user;
 
 import hello.foundation.BasicService;
-import hello.service.auth.Auth;
+import hello.service.role.Role;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.BeanPropertyRowMapper;
 import org.springframework.stereotype.Service;
@@ -50,12 +50,12 @@ public class UserService extends BasicService<User>{
     }
 
     public List<String> getAuthsByUser(UUID userid) {
-        List<Auth> authlist = this.getJdbcTemplate().query("SELECT auth.id,auth.auth" +
+        List<Role> authlist = this.getJdbcTemplate().query("SELECT auth.id,auth.auth" +
                         " FROM auth, role_auth_relation " +
                         "WHERE auth.id=role_auth_relation.authid AND role_auth_relation.userid=?",
-                new Object[]{userid}, new BeanPropertyRowMapper<>(Auth.class));
+                new Object[]{userid}, new BeanPropertyRowMapper<>(Role.class));
 
-        return authlist.stream().map(Auth::getAuth).collect(Collectors.toList());
+        return authlist.stream().map(Role::getAuth).collect(Collectors.toList());
     }
 
     public void addAuthForUser(String userid, int authid){

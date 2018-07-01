@@ -60,10 +60,16 @@ public class UserController {
     }
 
 //    @CrossOrigin(origins = "*")
-    @RequestMapping(value = "/{id}",method = RequestMethod.GET)
+//    @RequestMapping(value = "/{id}",method = RequestMethod.GET)
+//    @PostAuthorize("returnObject.username == principal.username or hasRole('ROLE_ADMIN')")
+//    public User getUserById(@PathVariable(value = "id")String id){
+//        return userService.getRowByUUID(id,User.class);
+//    }
+
+    @RequestMapping(value = "/{username}",method = RequestMethod.GET)
     @PostAuthorize("returnObject.username == principal.username or hasRole('ROLE_ADMIN')")
-    public User getUserById(@PathVariable(value = "id")String id){
-        return userService.getRowByUUID(id,User.class);
+    public User getUserByUsername(@PathVariable(value = "username")String username){
+        return userService.findUserByUsername(username);
     }
 
 //    @CrossOrigin(origins = "*")
