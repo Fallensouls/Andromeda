@@ -18,7 +18,10 @@ public class JwtUser implements UserDetails{
     private short rowstate;  //定义默认值为0
     @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss",timezone = "GMT+8")
     private Date crtdate; //创建日期
+    @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss",timezone = "GMT+8")
     private Date upddate; //修改日期
+    @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss",timezone = "GMT+8")
+    private Date lastlogin; //最后登录日期
     private Collection<? extends GrantedAuthority> authorities;
 
     public JwtUser(
@@ -30,6 +33,7 @@ public class JwtUser implements UserDetails{
             short rowstate,
             Date crtdate,
             Date upddate,
+            Date lastlogin,
             Collection<? extends GrantedAuthority> authorities
             ) {
         this.id = id;
@@ -40,6 +44,7 @@ public class JwtUser implements UserDetails{
         this.rowstate = rowstate;
         this.crtdate = crtdate;
         this.upddate = upddate;
+        this.lastlogin = lastlogin;
         this.authorities = authorities;
     }
 
@@ -107,5 +112,9 @@ public class JwtUser implements UserDetails{
 
     public Date getUpddate() {
         return upddate;
+    }
+
+    public Date getLastlogin() {
+        return lastlogin;
     }
 }

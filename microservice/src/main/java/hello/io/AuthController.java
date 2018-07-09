@@ -1,6 +1,7 @@
 package hello.io;
 
 import hello.service.auth.AuthService;
+import hello.service.security.JwtResponse;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.AuthenticationException;
@@ -10,6 +11,9 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 import javax.servlet.http.HttpServletRequest;
 import hello.service.user.User;
+
+import java.text.SimpleDateFormat;
+import java.util.Date;
 
 @RestController
 @RequestMapping(value = "/auth")
@@ -23,20 +27,19 @@ public class AuthController {
     @RequestMapping(value = "/login", method = RequestMethod.POST)
     public ResponseEntity<?> createAuthenticationToken(
             @RequestBody User user) throws AuthenticationException{
-        final String token = authService.login(user);
-        // Return the token
-        return ResponseEntity.ok(token);
+        JwtResponse jwtResponse = authService.login(user);
+        return ResponseEntity.ok().body(jwtResponse);
     }
 
     @RequestMapping(value = "/refresh", method = RequestMethod.GET)
     public ResponseEntity<?> refreshAndGetAuthenticationToken(
             HttpServletRequest request) throws AuthenticationException{
         String token = request.getHeader(tokenHeader);
-        String refreshedToken = authService.refresh(token);
-        if(refreshedToken == null) {
+        JwtResponse jwtResponse = authService.refresh(token);
+        if(jwtResponse == null) {
             return ResponseEntity.badRequest().body(null);
         } else {
-            return ResponseEntity.ok(refreshedToken);
+            return ResponseEntity.ok(jwtResponse);
         }
     }
 

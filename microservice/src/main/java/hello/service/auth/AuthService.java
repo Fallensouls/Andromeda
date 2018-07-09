@@ -1,5 +1,6 @@
 package hello.service.auth;
 
+import hello.service.security.JwtResponse;
 import hello.service.security.JwtUserDetailsService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -9,7 +10,11 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 
+import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.Date;
 import java.util.HashMap;
+import java.util.List;
 
 import hello.service.security.JwtTokenUtil;
 import hello.service.user.User;
@@ -47,24 +52,24 @@ public class AuthService {
         return userService.addRowByUUID(User.class,params);
     }
 
-
-    public String login(User user) {
+    public JwtResponse login(User user) {
         String username = user.getUsername();
         String password = user.getPassword();
         UsernamePasswordAuthenticationToken upToken = new UsernamePasswordAuthenticationToken(username, password);
         Authentication authentication = authenticationManager.authenticate(upToken);
         SecurityContextHolder.getContext().setAuthentication(authentication);
-        UserDetails userDetails = userDetailsService.loadUserByUsername(username);
-        return jwtTokenUtil.generateToken(userDetails);
+        JwtUser jwtUser = (JwtUser)userDetailsService.loadUserByUsername(username);
+        String token = jwtTokenUtil.generateToken(jwtUser);
+        userService.changeLastLogin(jwtUser.getUsername(),new Date()); // 修改最后登录时间
+        return new JwtResponse(jwtUser.getUsername(),jwtUser.getTelphone(),jwtUser.getEmail(),jwtUser.getCrtdate(),jwtUser.getUpddate(),jwtUser.getLastlogin(),new ArrayList<>(jwtUser.getAuthorities()),token);
     }
 
-
-    public String refresh(String oldToken) {
+    public JwtResponse refresh(String oldToken) {
         final String token = oldToken.substring(tokenHead.length());
         String username = jwtTokenUtil.getUsernameFromToken(token);
-        JwtUser user = (JwtUser) userDetailsService.loadUserByUsername(username);
-        if (jwtTokenUtil.canTokenBeRefreshed(token, user.getUpddate())){
-            return jwtTokenUtil.refreshToken(token);
+        JwtUser jwtUser = (JwtUser) userDetailsService.loadUserByUsername(username);
+        if (jwtTokenUtil.canTokenBeRefreshed(token, jwtUser.getUpddate())){
+            return new JwtResponse(jwtUser.getUsername(),jwtUser.getTelphone(),jwtUser.getEmail(),jwtUser.getCrtdate(),jwtUser.getUpddate(),jwtUser.getLastlogin(),new ArrayList<>(jwtUser.getAuthorities()),jwtTokenUtil.refreshToken(token));
         }
         return null;
     }

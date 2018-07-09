@@ -22,6 +22,7 @@ public class JwtUserFactory {
                 user.getRowstate(),
                 user.getCrtdate(),
                 user.getUpddate(),
+                user.getLastlogin(),
                 mapToGrantedAuthorities(userService.getAuthsByUser(user.getId()))
         );
     }

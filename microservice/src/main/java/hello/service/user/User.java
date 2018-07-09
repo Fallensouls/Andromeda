@@ -16,6 +16,8 @@ public class User {
     private Date crtdate; //创建日期
     @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss",timezone = "GMT+8")
     private Date upddate; //修改日期
+    @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss",timezone = "GMT+8")
+    private Date lastlogin; //最后登录时间
 
     public UUID getId() {
         return id;
@@ -79,5 +81,13 @@ public class User {
 
     public void setUpddate(Date upddate) {
         this.upddate = upddate;
+    }
+
+    public Date getLastlogin() {
+        return lastlogin;
+    }
+
+    public void setLastlogin(Date lastlogin) {
+        this.lastlogin = lastlogin;
     }
 }

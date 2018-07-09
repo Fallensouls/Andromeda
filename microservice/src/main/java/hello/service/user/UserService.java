@@ -26,14 +26,16 @@ public class UserService extends BasicService<User>{
         user.setId(id);
         user.setUpddate(new Date());
         user.setCrtdate(new Date());
+        user.setLastlogin(new Date());
         params.put("id", user.getId().toString());
         params.put("username",user.getUsername());
         params.put("password",user.getPassword());
         params.put("telphone", user.getTelphone());
         params.put("email", user.getEmail());
         params.put("rowstate", String.valueOf(user.getRowstate()));
-        params.put("crtdate",  user.getCrtdate().toString());
+        params.put("crtdate", user.getCrtdate().toString());
         params.put("upddate",  user.getUpddate().toString());
+        params.put("lastlogin", user.getLastlogin().toString());
         return params;
     }
 
@@ -66,5 +68,13 @@ public class UserService extends BasicService<User>{
     public void deleteAuthForUser(String userid, int authid){
         this.getJdbcTemplate().update("DELETE FROM role_auth_relation WHERE userid=? and authid=?",
                 UUID.fromString(userid), authid);
+    }
+
+    public void changeLastLogin(String username,Date time){
+        this.getJdbcTemplate().update("update role set lastlogin=? where username=?", time,username);
+    }
+
+    public void changeUpddate(String username, Date time){
+        this.getJdbcTemplate().update("update role set upddate=? where username=?", time,username);
     }
 }
