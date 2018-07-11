@@ -12,8 +12,6 @@ import org.springframework.web.bind.annotation.RestController;
 import javax.servlet.http.HttpServletRequest;
 import hello.service.user.User;
 
-import java.text.SimpleDateFormat;
-import java.util.Date;
 
 @RestController
 @RequestMapping(value = "/auth")
