@@ -60,16 +60,24 @@ public class AuthService {
         SecurityContextHolder.getContext().setAuthentication(authentication);
         JwtUser jwtUser = (JwtUser)userDetailsService.loadUserByUsername(username);
         String token = jwtTokenUtil.generateToken(jwtUser);
+        String refreshtoken = jwtTokenUtil.generateRefreshToken(jwtUser);
         userService.changeLastLogin(jwtUser.getUsername(),new Date()); // 修改最后登录时间
-        return new JwtResponse(jwtUser.getUsername(),jwtUser.getTelphone(),jwtUser.getEmail(),jwtUser.getCrtdate(),jwtUser.getUpddate(),jwtUser.getLastlogin(),new ArrayList<>(jwtUser.getAuthorities()),token);
+        return new JwtResponse(jwtUser.getUsername(),
+                jwtUser.getTelphone(),
+                jwtUser.getEmail(),
+                jwtUser.getCrtdate(),
+                jwtUser.getUpddate(),
+                jwtUser.getLastlogin()
+                ,new ArrayList<>(jwtUser.getAuthorities()),
+                token, refreshtoken);
     }
 
-    public JwtResponse refresh(String oldToken) {
-        final String token = oldToken.substring(tokenHead.length());
-        String username = jwtTokenUtil.getUsernameFromToken(token);
+    public String refresh(String RefreshToken) {
+        final String token = RefreshToken.substring(tokenHead.length());
+        String username = jwtTokenUtil.getUsernameFromRefreshToken(token); // 如果refreshtoken失效，会直接返回401
         JwtUser jwtUser = (JwtUser) userDetailsService.loadUserByUsername(username);
         if (jwtTokenUtil.canTokenBeRefreshed(token, jwtUser.getUpddate())){
-            return new JwtResponse(jwtUser.getUsername(),jwtUser.getTelphone(),jwtUser.getEmail(),jwtUser.getCrtdate(),jwtUser.getUpddate(),jwtUser.getLastlogin(),new ArrayList<>(jwtUser.getAuthorities()),jwtTokenUtil.refreshToken(token));
+            return jwtTokenUtil.refreshToken(token);
         }
         return null;
     }

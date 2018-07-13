@@ -14,10 +14,11 @@ public class JwtResponse {
     private String upddate;
     private String lastlogin;
     private String token;
+    private String refreshtoken;
     private List<GrantedAuthority> authorities;
     private SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
 
-    public JwtResponse(String username,String telphone, String email, Date crtdate, Date upddate, Date lastlogin,List<GrantedAuthority> authorities,String token){
+    public JwtResponse(String username,String telphone, String email, Date crtdate, Date upddate, Date lastlogin,List<GrantedAuthority> authorities,String token, String refreshtoken){
         this.username = username;
         this.telphone = telphone;
         this.email = email;
@@ -29,6 +30,7 @@ public class JwtResponse {
         this.lastlogin = lastlogintime;
         this.authorities = authorities;
         this.token = token;
+        this.refreshtoken = refreshtoken;
     }
 
     public String getUsername() {
@@ -57,6 +59,10 @@ public class JwtResponse {
 
     public String getToken() {
         return token;
+    }
+
+    public String getRefreshtoken() {
+        return refreshtoken;
     }
 
     public List<GrantedAuthority> getAuthorities() {

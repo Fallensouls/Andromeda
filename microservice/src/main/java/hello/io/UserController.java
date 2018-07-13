@@ -18,7 +18,6 @@ public class UserController {
     private UserService userService;
 
 
-//    @CrossOrigin(origins = "*")
     @RequestMapping(method = RequestMethod.GET)
     @PreAuthorize("hasRole('ADMIN')")
     public List<User> getUserList(@RequestParam(value = "name" ,required = false) String name,
@@ -36,7 +35,6 @@ public class UserController {
         return  userService.findList(params,User.class);
     }
 
-//    @CrossOrigin(origins = "*")
     @RequestMapping(value = "/count",method = RequestMethod.GET)
     @PreAuthorize("hasRole('ADMIN')")
     public long getCount(@RequestParam(value = "name" ,required = false) String name,
@@ -49,7 +47,6 @@ public class UserController {
         return userService.getCount(params);
     }
 
-//    @CrossOrigin(origins = "*")
     @RequestMapping(method = RequestMethod.POST)
     @PreAuthorize("hasRole('ADMIN')")
     public User addUser(@RequestBody User user){
@@ -72,14 +69,12 @@ public class UserController {
         return userService.findUserByUsername(username);
     }
 
-//    @CrossOrigin(origins = "*")
     @RequestMapping(value = "/{id}",method = RequestMethod.DELETE)
     @PreAuthorize("hasRole('ADMIN')")
     public void deleteUser(@PathVariable(value = "id")String id){
         userService.removeRowByUUID(id);
     }
 
-//    @CrossOrigin(origins = "*")
     @RequestMapping(value = "/{id}",method = RequestMethod.PUT)
     @PreAuthorize("hasRole('ADMIN')")
     public void updateUser(@PathVariable(value = "id")String id,

@@ -33,11 +33,11 @@ public class AuthController {
     public ResponseEntity<?> refreshAndGetAuthenticationToken(
             HttpServletRequest request) throws AuthenticationException{
         String token = request.getHeader(tokenHeader);
-        JwtResponse jwtResponse = authService.refresh(token);
-        if(jwtResponse == null) {
+        String newtoken = authService.refresh(token);
+        if(newtoken == null) {
             return ResponseEntity.badRequest().body(null);
         } else {
-            return ResponseEntity.ok(jwtResponse);
+            return ResponseEntity.ok(newtoken);
         }
     }
 
