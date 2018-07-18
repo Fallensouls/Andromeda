@@ -8,9 +8,11 @@ import hello.filters.pre.SimpleFilter;
 import org.springframework.web.filter.CorsFilter;
 import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
+import org.springframework.cloud.netflix.eureka.EnableEurekaClient;
 
 @EnableZuulProxy
 @SpringBootApplication
+@EnableEurekaClient
 public class GatewayApplication {
 
   public static void main(String[] args) {

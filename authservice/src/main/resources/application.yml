@@ -1,0 +1,22 @@
+spring:
+  application:
+    name: authservice
+  datasource:
+    username: postgres
+    url: jdbc:postgresql://localhost:5432/microservice?useUnicode=true&amp;characterEncoding=UTF-8
+    driver-class-name: org.postgresql.Driver
+    password: lg19960228
+
+server:
+  port: 8082
+
+eureka:
+  client:
+    healthcheck:
+      enabled: true
+    serviceUrl:
+      defaultZone: http://localhost:8761/eureka
+  instance:
+    instance-id:  ${spring.application.name}:${spring.application.instance_id:${server.port}}}
+    prefer-ip-address: true
+    appname: authservice

@@ -1,0 +1,24 @@
+spring:
+  application:
+    name: gateway
+server:
+  port: 8090
+eureka:
+  client:
+    healthcheck:
+      enabled: true
+    serviceUrl:
+      defaultZone: http://localhost:8761/eureka
+  instance:
+    instance-id:  ${spring.application.name}:${spring.application.instance_id:${server.port}}}
+    prefer-ip-address: true
+    appname: gateway
+zuul:
+  sensitive-headers: Cookie,Set-Cookie
+  routes:
+    auth:
+      path: /auth/**
+      service-id: authservice
+    user:
+      path: /user/**
+      service-id: authservice

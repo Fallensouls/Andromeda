@@ -5,16 +5,15 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import hello.init.JxCustomConfigure;
 import org.springframework.boot.web.servlet.ServletComponentScan;
+import org.springframework.cloud.netflix.eureka.EnableEurekaClient;
 
 // springboot 的程序主入口
 @SpringBootApplication
-@EnableConfigurationProperties(JxCustomConfigure.class)
+//@EnableConfigurationProperties(JxCustomConfigure.class)
 @ServletComponentScan
+@EnableEurekaClient
 public class MainApplication {
-
   public static void main(String[] args) {
     SpringApplication.run(MainApplication.class, args);
   }
-
-
 }
