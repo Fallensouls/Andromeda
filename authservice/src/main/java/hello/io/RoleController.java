@@ -19,9 +19,9 @@ public class RoleController {
 
     @RequestMapping(method = RequestMethod.POST)
     @PreAuthorize("hasRole('ADMIN')")
-    public Role addRole(@RequestBody Role auth){
+    public void addRole(@RequestBody Role auth){
         HashMap<String, Object> params = roleService.getProperties(auth);
-        return roleService.addRowByID(Role.class,params);
+        roleService.addRowByID(Role.class,params);
     }
 
     @RequestMapping(method = RequestMethod.DELETE)

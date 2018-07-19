@@ -92,7 +92,7 @@ public abstract class BasicService<T> {
     }
 
     public void removeRowByID(String id) {
-        String sql = "UPDATE "+ this.tableName +" SET rowstate=1 WHERE id=?";
+        String sql = "DELETE FROM "+ this.tableName +" WHERE id=?";
         jdbcTemplate.update(sql,Integer.parseInt(id));
     }
 
@@ -138,11 +138,10 @@ public abstract class BasicService<T> {
         return jdbcTemplate.queryForObject(sql, new Object[]{UUID.fromString(id)}, new BeanPropertyRowMapper<>(clazz));
     }
 
-    public T addRowByID(Class<T> clazz,Map<String, Object> params){
+    public void addRowByID(Class<T> clazz,Map<String, Object> params){
         DSLContext create = DSL.using(SQLDialect.POSTGRES_9_5);
         List<Field<?>> columns = new ArrayList<>();
         List<Field<?>> values = new ArrayList<>();
-        String id = (String)params.get("id");
 
         for (Object o : params.entrySet()) {
             Map.Entry entry = (Map.Entry) o;
@@ -156,8 +155,8 @@ public abstract class BasicService<T> {
         }
         String sql=create.insertInto(DSL.table(this.tableName)).columns(columns).values(values).getSQL();
         jdbcTemplate.update(sql);
-        sql = "SELECT * FROM " + this.tableName + " where id=?";
-        return jdbcTemplate.queryForObject(sql, new Object[]{Integer.parseInt(id)}, new BeanPropertyRowMapper<>(clazz));
+//        sql = "SELECT * FROM " + this.tableName + " where id=?";
+//        return jdbcTemplate.queryForObject(sql, new Object[]{Integer.parseInt(id)}, new BeanPropertyRowMapper<>(clazz));
     }
 
     private SelectConditionStep getDSL(SelectSelectStep select,Map<String,Object> params) {
