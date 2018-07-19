@@ -77,4 +77,8 @@ public class UserService extends BasicService<User>{
     public void changeUpddate(String username, Date time){
         this.getJdbcTemplate().update("update role set upddate=? where username=?", time,username);
     }
+
+    public void changePassword(String username,String password){
+        this.getJdbcTemplate().update("update role set password=? where username=?", password,username);
+    }
 }

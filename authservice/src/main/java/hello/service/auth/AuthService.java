@@ -81,5 +81,19 @@ public class AuthService {
         }
         return null;
     }
+
+    public String findEmail(String username){
+        JwtUser jwtUser = (JwtUser) userDetailsService.loadUserByUsername(username);
+        if(jwtUser != null){
+            return jwtUser.getEmail();
+        }
+        return null;
+    }
+
+    public void changePassword(String username,String password){
+        BCryptPasswordEncoder encoder = new BCryptPasswordEncoder();
+        userService.changePassword(username,encoder.encode(password));
+        userService.changeUpddate(username,new Date());
+    }
 }
 

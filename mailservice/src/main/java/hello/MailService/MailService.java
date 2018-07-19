@@ -2,7 +2,7 @@ package hello.MailService;
 
 public interface MailService {
 
-    void sendSimpleMail(String to, String subject, String content);
+    String sendSimpleMail(String to, String subject, String content);
 
     void sendHtmlMail(String to, String subject, String content);
 

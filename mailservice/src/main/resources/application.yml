@@ -1,0 +1,37 @@
+#spring.mail.default-encoding=UTF-8
+#spring.mail.host=smtp.126.com
+#spring.mail.username=No_RepIy@126.com
+#spring.mail.password=lg19960228
+#spring.mail.properties.mail.smtp.auth=true
+#spring.mail.properties.mail.smtp.starttls.enable=true
+#spring.mail.properties.mail.smtp.starttls.required=true
+#
+#spring.application.name=mailservice
+#server.port=8091
+spring:
+  application:
+    name: mailservice
+  mail:
+    default-encoding: UTF-8
+    host: smtp.126.com
+    username: No_RepIy@126.com
+    password: lg19960228
+    properties:
+      mail:
+        smtp:
+          auth: true
+          starttls:
+            enable: true
+            required: true
+server:
+  port: 8091
+eureka:
+  client:
+    healthcheck:
+      enabled: true
+    serviceUrl:
+      defaultZone: http://localhost:8761/eureka
+  instance:
+    instance-id:  ${spring.application.name}:${spring.application.instance_id:${server.port}}}
+    prefer-ip-address: true
+    appname: mailservice

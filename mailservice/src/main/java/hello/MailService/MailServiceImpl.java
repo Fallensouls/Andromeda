@@ -24,18 +24,21 @@ public class MailServiceImpl implements MailService {
     private String from;
 
     @Override
-    public void sendSimpleMail(String to, String subject, String content) {
+    public String sendSimpleMail(String to, String subject, String content) {
         SimpleMailMessage message = new SimpleMailMessage();
         message.setFrom(from);
         message.setTo(to);
         message.setSubject(subject);
         message.setText(content);
+        String status = "success";
         try {
             mailSender.send(message);
             logger.info("简单邮件已经发送。");
         } catch (Exception e) {
             logger.error("发送简单邮件时发生异常！", e);
+            status = "fail";
         }
+        return status;
     }
 
     @Override
