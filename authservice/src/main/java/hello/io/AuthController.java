@@ -3,6 +3,7 @@ package hello.io;
 import hello.service.auth.AuthService;
 import hello.service.password.CreateUrl;
 import hello.service.password.MailRequest;
+import hello.service.password.PasswordTokenUtil;
 import hello.service.password.VerifyMailUrl;
 import hello.service.security.JwtResponse;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -76,21 +77,28 @@ public class AuthController {
     }
 
     @RequestMapping(value = "/resetpassword", method = RequestMethod.POST)
-    public ResponseEntity<?> resetPassword(@RequestBody User user){
+    public ResponseEntity<?> resetPassword(@RequestParam("token")String token,@RequestBody User user){
         String username = user.getUsername();
-        String password = user.getPassword();
-        authService.changePassword(username,password);
-        return ResponseEntity.ok().body(null);
+        if(new PasswordTokenUtil().validateToken(token,username)) {
+            String password = user.getPassword();
+            authService.changePassword(username, password);
+            return ResponseEntity.ok().body(null);
+        }
+        else {
+            return ResponseEntity.badRequest().body(null);
+        }
     }
 
     @RequestMapping(value = "/verify", method = RequestMethod.GET)
     public ResponseEntity<?> verify(@RequestParam("sid") String sid,@RequestParam("username")String username,HttpServletResponse response)throws IOException{
         sid = sid.replace(' ','+');
         if(verifyMailUrl.verifyUrl(username,sid)){
-            response.sendRedirect("http://localhost:8080/resetpassword");
+            String token = new PasswordTokenUtil().generateToken(username);
+            response.sendRedirect("http://localhost:8080/resetpassword?token="+token+"&username="+username);
             return ResponseEntity.ok().body(null);
         }
         else {
+            response.sendRedirect("http://localhost:8080/404");
             return ResponseEntity.badRequest().body(null);
         }
     }
