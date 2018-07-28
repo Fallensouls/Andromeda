@@ -18,7 +18,9 @@ zuul:
   routes:
     auth:
       path: /auth/**
+      stripPrefix: false
       service-id: authservice
     user:
       path: /user/**
+      stripPrefix: false
       service-id: authservice

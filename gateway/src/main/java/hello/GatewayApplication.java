@@ -29,7 +29,7 @@ public class GatewayApplication {
     final UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
     final CorsConfiguration config = new CorsConfiguration();
     config.setAllowCredentials(true); // 允许cookies跨域
-    config.addAllowedOrigin("http://localhost:8080");// 允许向该服务器提交请求的URI，*表示全部允许。这里应限制来源域，
+    config.addAllowedOrigin("*");// 允许向该服务器提交请求的URI，*表示全部允许。这里应限制来源域，
                                                           // 比如http://xxxx:8080,以降低安全风险。以后应置换为前端网页的ip地址
     config.addAllowedHeader("*");// 允许访问的头信息,*表示全部
     config.setMaxAge(18000L);// 预检请求的缓存时间（秒），即在这个时间段里，对于相同的跨域请求不会再预检了
