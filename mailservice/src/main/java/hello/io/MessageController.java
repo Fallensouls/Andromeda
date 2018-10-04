@@ -21,14 +21,11 @@ public class MessageController {
 
     @RequestMapping(value = "/send", method = RequestMethod.POST)
     public ResponseEntity<?> SendMessage(@RequestBody MessageRequest messageRequest){
-        if(messageRequest.getType() == 0){
+        if(messageRequest.getTo().contains("@")){
             return SendEmail(messageRequest);
         }
-        else if(messageRequest.getType() == 1){
-            return SendSMS(messageRequest);
-        }
         else{
-            return SendWeChat(messageRequest);
+            return SendSMS(messageRequest);
         }
     }
 
@@ -66,13 +63,13 @@ public class MessageController {
         }
     }
 
-    private ResponseEntity<?> SendWeChat(@RequestBody MessageRequest wechatRequest){
-        String status = mailService.sendSimpleMail(wechatRequest.getTo(),wechatRequest.getSubject(),wechatRequest.getContent());
-        if(status.equals("success")){
-            return ResponseEntity.ok().body("send wechat message successfully!");
-        }
-        else{
-            return ResponseEntity.badRequest().body("fail to send wechat message!");
-        }
-    }
+//    private ResponseEntity<?> SendWeChat(@RequestBody MessageRequest wechatRequest){
+//        String status = mailService.sendSimpleMail(wechatRequest.getTo(),wechatRequest.getSubject(),wechatRequest.getContent());
+//        if(status.equals("success")){
+//            return ResponseEntity.ok().body("send wechat message successfully!");
+//        }
+//        else{
+//            return ResponseEntity.badRequest().body("fail to send wechat message!");
+//        }
+//    }
 }

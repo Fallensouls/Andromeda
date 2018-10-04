@@ -5,7 +5,6 @@ public class MessageRequest {
     private String to;
     private String subject;
     private String content;
-    private short type;
 
     public String getFrom() {
         return from;
@@ -39,11 +38,4 @@ public class MessageRequest {
         this.content = content;
     }
 
-    public short getType() {
-        return type;
-    }
-
-    public void setType(short type) {
-        this.type = type;
-    }
 }
