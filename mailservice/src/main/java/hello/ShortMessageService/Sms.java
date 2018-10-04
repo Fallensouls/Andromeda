@@ -1,4 +1,4 @@
-package hello.ShortMessageService;
+﻿package hello.ShortMessageService;
 
 import com.aliyuncs.DefaultAcsClient;
 import com.aliyuncs.IAcsClient;
@@ -39,8 +39,8 @@ public class Sms {
     static final String domain = "dysmsapi.aliyuncs.com";
 
     // TODO 此处需要替换成开发者自己的AK(在阿里云访问控制台寻找)
-    static final String accessKeyId = "LTAIQMHK0f1XlS48";
-    static final String accessKeySecret = "wFdWY63bpNbJz5VoCfNyE3562f5vaW";
+    static final String accessKeyId = "dskfljskldf";
+    static final String accessKeySecret = "sdfjksdfjsldjfd";
 
     public SendSmsResponse sendSms(String PhoneNumbers, String SignName, String TemplateCode,
                                    String... args) throws ClientException {
