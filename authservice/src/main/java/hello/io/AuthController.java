@@ -1,10 +1,7 @@
 package hello.io;
 
 import hello.service.auth.AuthService;
-import hello.service.password.CreateUrl;
-import hello.service.password.MailRequest;
-import hello.service.password.PasswordTokenUtil;
-import hello.service.password.VerifyMailUrl;
+import hello.service.password.*;
 import hello.service.security.JwtResponse;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -37,6 +34,9 @@ public class AuthController {
     @Autowired
     private VerifyMailUrl verifyMailUrl;
 
+    @Autowired
+    private MessageService messageService;
+
     @RequestMapping(value = "/login", method = RequestMethod.POST)
     public ResponseEntity<?> createAuthenticationToken(
             @RequestBody User user) throws AuthenticationException{
@@ -61,17 +61,32 @@ public class AuthController {
         return authService.register(addedUser);
     }
 
+//    @RequestMapping(value = "/sendemail", method = RequestMethod.POST)
+//    public ResponseEntity<?> sendEmail(@RequestBody User user){
+//        String username = user.getUsername();
+//        String email = authService.findEmail(username);
+//        if(email != null){
+//            MessageRequest mailRequest = new MessageRequest();
+//            mailRequest.setFrom(username);
+//            mailRequest.setTo(email);
+//            mailRequest.setSubject("更改密码");
+//            mailRequest.setContent("点击链接以更改您的密码"+createUrl.createurl("http://localhost:8090/auth/verify",username));
+//            return restTemplate.postForEntity("http://MAILSERVICE/mail/send",mailRequest,String.class);
+//        }
+//        return ResponseEntity.badRequest().body("The user does not exist.");
+//    }
+
     @RequestMapping(value = "/sendemail", method = RequestMethod.POST)
     public ResponseEntity<?> sendEmail(@RequestBody User user){
         String username = user.getUsername();
         String email = authService.findEmail(username);
         if(email != null){
-            MailRequest mailRequest = new MailRequest();
-            mailRequest.setUsername(username);
-            mailRequest.setEmail(email);
+            MessageRequest mailRequest = new MessageRequest();
+            mailRequest.setFrom(username);
+            mailRequest.setTo(email);
             mailRequest.setSubject("更改密码");
             mailRequest.setContent("点击链接以更改您的密码"+createUrl.createurl("http://localhost:8090/auth/verify",username));
-            return restTemplate.postForEntity("http://MAILSERVICE/mail/send",mailRequest,String.class);
+            return messageService.SendMessage(mailRequest);
         }
         return ResponseEntity.badRequest().body("The user does not exist.");
     }

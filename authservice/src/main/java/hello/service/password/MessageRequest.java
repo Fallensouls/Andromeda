@@ -1,25 +1,25 @@
 package hello.service.password;
 
-public class MailRequest {
-    private String username;
-    private String email;
+public class MessageRequest {
+    private String from;
+    private String to;
     private String subject;
     private String content;
 
-    public String getUsername() {
-        return username;
+    public String getFrom() {
+        return from;
     }
 
-    public void setUsername(String username) {
-        this.username = username;
+    public void setFrom(String from) {
+        this.from = from;
     }
 
-    public String getEmail() {
-        return email;
+    public String getTo() {
+        return to;
     }
 
-    public void setEmail(String email) {
-        this.email = email;
+    public void setTo(String to) {
+        this.to = to;
     }
 
     public String getSubject() {

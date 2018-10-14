@@ -10,7 +10,7 @@
 #server.port=8091
 spring:
   application:
-    name: mailservice
+    name: messageservice
   mail:
     default-encoding: UTF-8
     host: smtp.126.com
