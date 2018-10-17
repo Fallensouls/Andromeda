@@ -13,6 +13,8 @@ import org.springframework.stereotype.Component;
 import javax.mail.MessagingException;
 import javax.mail.internet.MimeMessage;
 import java.io.File;
+import java.util.List;
+
 @Component
 public class MailServiceImpl implements MailService {
     private final Logger logger = LoggerFactory.getLogger(this.getClass());
@@ -24,21 +26,40 @@ public class MailServiceImpl implements MailService {
     private String from;
 
     @Override
-    public String sendSimpleMail(String to, String subject, String content) {
+    public void sendEmail(List<String> to, String subject, String content, int type, String... args){
+        switch (type) {
+            case 0:
+                for (String add : to) {
+                    sendSimpleMail(add, subject, content);
+                }
+            case 1:
+                for (String add : to) {
+                    sendHtmlMail(add, subject, content);
+                }
+            case 2:
+                for (String add : to) {
+                    sendAttachmentsMail(add, subject, content, args[0]);
+                }
+            case 3:
+                for (String add : to) {
+                    sendInlineResourceMail(add, subject, content, args[0], args[1]);
+                }
+        }
+    }
+
+    @Override
+    public void sendSimpleMail(String to, String subject, String content) {
         SimpleMailMessage message = new SimpleMailMessage();
         message.setFrom(from);
         message.setTo(to);
         message.setSubject(subject);
         message.setText(content);
-        String status = "success";
         try {
             mailSender.send(message);
             logger.info("简单邮件已经发送。");
         } catch (Exception e) {
-            logger.error("发送简单邮件时发生异常！", e);
-            status = "fail";
+            logger.error("向"+ to +"发送简单邮件时发生异常！", e);
         }
-        return status;
     }
 
     @Override

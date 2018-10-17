@@ -1,8 +1,12 @@
 package hello.MailService;
 
+import java.util.List;
+
 public interface MailService {
 
-    String sendSimpleMail(String to, String subject, String content);
+    void sendSimpleMail(String to, String subject, String content);
+
+    void sendEmail(List<String>to, String subject, String content, int type, String... args);
 
     void sendHtmlMail(String to, String subject, String content);
 

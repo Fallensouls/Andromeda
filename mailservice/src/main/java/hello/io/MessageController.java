@@ -21,7 +21,8 @@ public class MessageController {
 
     @RequestMapping(value = "/send", method = RequestMethod.POST)
     public ResponseEntity<?> SendMessage(@RequestBody MessageRequest messageRequest){
-        if(messageRequest.getTo().contains("@")){
+        assert messageRequest.getTo() != null;
+        if(messageRequest.getTo().get(0).contains("@")){
             return SendEmail(messageRequest);
         }
         else{
@@ -30,12 +31,11 @@ public class MessageController {
     }
 
     private ResponseEntity<?> SendEmail(@RequestBody MessageRequest mailRequest){
-        String status = mailService.sendSimpleMail(mailRequest.getTo(),mailRequest.getSubject(),mailRequest.getContent());
-        if(status.equals("success")){
-            return ResponseEntity.ok().body("send email successfully!");
-        }
-        else{
-            return ResponseEntity.badRequest().body("fail to send email!");
+        try {
+            mailService.sendEmail(mailRequest.getTo(),mailRequest.getSubject(),mailRequest.getContent(),0);
+            return ResponseEntity.ok().body(null);
+        }catch (Exception e){
+            return ResponseEntity.badRequest().body(null);
         }
     }
 
@@ -43,7 +43,7 @@ public class MessageController {
         SendSmsResponse response = new SendSmsResponse();
         String status = "success";
         try{
-            response = sms.sendSms(smsRequest.getTo(),smsRequest.getSubject(),smsRequest.getContent());
+            response = sms.sendSms(smsRequest.getTo().get(0),smsRequest.getSubject(),smsRequest.getContent());
         }catch (Exception e){
             System.out.println("Error when sending shortmessage," + e);
             status = "fail";
@@ -56,12 +56,13 @@ public class MessageController {
             }
         }
         if(status.equals("fail")){
-            return ResponseEntity.badRequest().body("fail to send shortmessage!");
+            return ResponseEntity.badRequest().body(null);
         }
         else{
-            return ResponseEntity.ok().body("send shortmessage successfully!");
+            return ResponseEntity.ok().body(null);
         }
     }
+
 
 //    private ResponseEntity<?> SendWeChat(@RequestBody MessageRequest wechatRequest){
 //        String status = mailService.sendSimpleMail(wechatRequest.getTo(),wechatRequest.getSubject(),wechatRequest.getContent());

@@ -1,8 +1,10 @@
 package hello.io;
 
+import java.util.List;
+
 public class MessageRequest {
     private String from;
-    private String to;
+    private List<String> to;
     private String subject;
     private String content;
 
@@ -14,11 +16,11 @@ public class MessageRequest {
         this.from = from;
     }
 
-    public String getTo() {
+    public List<String> getTo() {
         return to;
     }
 
-    public void setTo(String to) {
+    public void setTo(List<String> to) {
         this.to = to;
     }
 
