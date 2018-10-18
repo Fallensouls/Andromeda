@@ -26,24 +26,27 @@ public class MailServiceImpl implements MailService {
     private String from;
 
     @Override
-    public void sendEmail(List<String> to, String subject, String content, int type, String... args){
-        switch (type) {
-            case 0:
-                for (String add : to) {
-                    sendSimpleMail(add, subject, content);
-                }
-            case 1:
-                for (String add : to) {
-                    sendHtmlMail(add, subject, content);
-                }
-            case 2:
-                for (String add : to) {
-                    sendAttachmentsMail(add, subject, content, args[0]);
-                }
-            case 3:
-                for (String add : to) {
-                    sendInlineResourceMail(add, subject, content, args[0], args[1]);
-                }
+    public void sendEmail(List<String> to, String subject, String content, String... args)throws Exception{
+        if(args == null) {
+//            for (String add : to) {
+//                sendSimpleMail(add, subject, content);
+//            }
+            for (String add : to) {
+                sendHtmlMail(add, subject, content);
+            }
+        }
+        else if(args.length == 1) {
+            for (String add : to) {
+                sendAttachmentsMail(add, subject, content, args[0]);
+            }
+        }
+        else if(args.length == 2){
+            for (String add : to) {
+                sendInlineResourceMail(add, subject, content, args[0], args[1]);
+            }
+        }
+        else{
+            throw new Exception("请求的参数数量有误");
         }
     }
 
@@ -75,7 +78,7 @@ public class MailServiceImpl implements MailService {
             mailSender.send(message);
             logger.info("html邮件发送成功");
         } catch (MessagingException e) {
-            logger.error("发送html邮件时发生异常！", e);
+            logger.error("向"+ to +"发送html邮件时发生异常！", e);
         }
     }
 
@@ -95,7 +98,7 @@ public class MailServiceImpl implements MailService {
             mailSender.send(message);
             logger.info("带附件的邮件已经发送。");
         } catch (MessagingException e) {
-            logger.error("发送带附件的邮件时发生异常！", e);
+            logger.error("向"+ to +"发送带附件的邮件时发生异常！", e);
         }
     }
 
@@ -120,7 +123,7 @@ public class MailServiceImpl implements MailService {
             mailSender.send(message);
             logger.info("嵌入静态资源的邮件已经发送。");
         } catch (MessagingException e) {
-            logger.error("发送嵌入静态资源的邮件时发生异常！", e);
+            logger.error("向"+ to +"发送嵌入静态资源的邮件时发生异常！", e);
         }
     }
 }

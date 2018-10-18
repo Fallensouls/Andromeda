@@ -3,6 +3,8 @@ package hello.io;
 import com.aliyuncs.dysmsapi.model.v20170525.SendSmsResponse;
 import hello.MailService.MailService;
 import hello.ShortMessageService.Sms;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -13,6 +15,8 @@ import org.springframework.web.bind.annotation.RestController;
 @RestController
 @RequestMapping(value = "/mail")
 public class MessageController {
+    private final Logger logger = LoggerFactory.getLogger(this.getClass());
+
     @Autowired
     private MailService mailService;
 
@@ -32,35 +36,32 @@ public class MessageController {
 
     private ResponseEntity<?> SendEmail(@RequestBody MessageRequest mailRequest){
         try {
-            mailService.sendEmail(mailRequest.getTo(),mailRequest.getSubject(),mailRequest.getContent(),0);
+            mailService.sendEmail(mailRequest.getTo(),mailRequest.getSubject(),mailRequest.getContent());
             return ResponseEntity.ok().body(null);
         }catch (Exception e){
+            logger.error(e.getMessage());
             return ResponseEntity.badRequest().body(null);
         }
     }
 
     private ResponseEntity<?> SendSMS(@RequestBody MessageRequest smsRequest){
         SendSmsResponse response = new SendSmsResponse();
-        String status = "success";
         try{
             response = sms.sendSms(smsRequest.getTo().get(0),smsRequest.getSubject(),smsRequest.getContent());
+            return ResponseEntity.ok().body(null);
         }catch (Exception e){
-            System.out.println("Error when sending shortmessage," + e);
-            status = "fail";
-        }
-        finally {
-            try{
-                sms.queryDetails(response);
-            }catch (Exception e){
-                status = "fail to query the details.";
-            }
-        }
-        if(status.equals("fail")){
+            logger.error("Error when sending shortmessage," + e.getMessage());
             return ResponseEntity.badRequest().body(null);
         }
-        else{
-            return ResponseEntity.ok().body(null);
-        }
+//        finally {
+//            try{
+//                sms.queryDetails(response);
+//            }catch (Exception e){
+//                logger.info("fail to query the details.");
+//                status = "fail to query the details.";
+//            }
+//        }
+
     }
 
 

@@ -6,7 +6,7 @@ public interface MailService {
 
     void sendSimpleMail(String to, String subject, String content);
 
-    void sendEmail(List<String>to, String subject, String content, int type, String... args);
+    void sendEmail(List<String>to, String subject, String content, String... args)throws Exception;
 
     void sendHtmlMail(String to, String subject, String content);
 
