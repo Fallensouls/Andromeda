@@ -1,5 +1,6 @@
 package hello.MailService;
 
+import hello.exception.ArgumentErrorException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -26,27 +27,22 @@ public class MailServiceImpl implements MailService {
     private String from;
 
     @Override
-    public void sendEmail(List<String> to, String subject, String content, String... args)throws Exception{
+    public void sendEmail(List<String> to, String subject, String content, String... args)throws ArgumentErrorException{
+        String[] toArray = to.toArray(new String[to.size()]);
         if(args == null) {
 //            for (String add : to) {
 //                sendSimpleMail(add, subject, content);
 //            }
-            for (String add : to) {
-                sendHtmlMail(add, subject, content);
-            }
+            sendHtmlMail(toArray, subject, content);
         }
         else if(args.length == 1) {
-            for (String add : to) {
-                sendAttachmentsMail(add, subject, content, args[0]);
-            }
+            sendAttachmentsMail(toArray, subject, content, args[0]);
         }
         else if(args.length == 2){
-            for (String add : to) {
-                sendInlineResourceMail(add, subject, content, args[0], args[1]);
-            }
+            sendInlineResourceMail(toArray, subject, content, args[0], args[1]);
         }
         else{
-            throw new Exception("请求的参数数量有误");
+            throw new ArgumentErrorException("请求的参数数量有误,参数数量为：", args.length+3);
         }
     }
 
@@ -66,7 +62,7 @@ public class MailServiceImpl implements MailService {
     }
 
     @Override
-    public void sendHtmlMail(String to, String subject, String content) {
+    public void sendHtmlMail(String[] to, String subject, String content) {
         MimeMessage message = mailSender.createMimeMessage();
         try {
             //true表示需要创建一个multipart message
@@ -78,12 +74,12 @@ public class MailServiceImpl implements MailService {
             mailSender.send(message);
             logger.info("html邮件发送成功");
         } catch (MessagingException e) {
-            logger.error("向"+ to +"发送html邮件时发生异常！", e);
+            logger.error("发送html邮件时发生异常！", e.getMessage());
         }
     }
 
 
-    public void sendAttachmentsMail(String to, String subject, String content, String filePath){
+    public void sendAttachmentsMail(String[] to, String subject, String content, String filePath){
         MimeMessage message = mailSender.createMimeMessage();
         try {
             MimeMessageHelper helper = new MimeMessageHelper(message, true);
@@ -98,7 +94,7 @@ public class MailServiceImpl implements MailService {
             mailSender.send(message);
             logger.info("带附件的邮件已经发送。");
         } catch (MessagingException e) {
-            logger.error("向"+ to +"发送带附件的邮件时发生异常！", e);
+            logger.error("发送带附件的邮件时发生异常！", e.getMessage());
         }
     }
 
@@ -110,7 +106,7 @@ public class MailServiceImpl implements MailService {
      * @param rscPath
      * @param rscId
      */
-    public void sendInlineResourceMail(String to, String subject, String content, String rscPath, String rscId){
+    public void sendInlineResourceMail(String[] to, String subject, String content, String rscPath, String rscId){
         MimeMessage message = mailSender.createMimeMessage();
         try {
             MimeMessageHelper helper = new MimeMessageHelper(message, true);
@@ -123,7 +119,7 @@ public class MailServiceImpl implements MailService {
             mailSender.send(message);
             logger.info("嵌入静态资源的邮件已经发送。");
         } catch (MessagingException e) {
-            logger.error("向"+ to +"发送嵌入静态资源的邮件时发生异常！", e);
+            logger.error("发送嵌入静态资源的邮件时发生异常！", e.getMessage());
         }
     }
 }

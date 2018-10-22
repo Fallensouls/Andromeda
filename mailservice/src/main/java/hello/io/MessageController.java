@@ -3,6 +3,8 @@ package hello.io;
 import com.aliyuncs.dysmsapi.model.v20170525.SendSmsResponse;
 import hello.MailService.MailService;
 import hello.ShortMessageService.Sms;
+import hello.dataobject.MessageRequest;
+import hello.enums.MessageTypeEnum;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -13,7 +15,7 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController
-@RequestMapping(value = "/mail")
+@RequestMapping(value = "/message")
 public class MessageController {
     private final Logger logger = LoggerFactory.getLogger(this.getClass());
 
@@ -25,12 +27,14 @@ public class MessageController {
 
     @RequestMapping(value = "/send", method = RequestMethod.POST)
     public ResponseEntity<?> SendMessage(@RequestBody MessageRequest messageRequest){
-        assert messageRequest.getTo() != null;
-        if(messageRequest.getTo().get(0).contains("@")){
+        if(messageRequest.getType() == MessageTypeEnum.MAIL){
             return SendEmail(messageRequest);
         }
-        else{
+        else if(messageRequest.getType() == MessageTypeEnum.SHORTMESSAGE){
             return SendSMS(messageRequest);
+        }
+        else{
+            return null;
         }
     }
 
