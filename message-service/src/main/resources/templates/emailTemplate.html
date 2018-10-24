@@ -1,0 +1,13 @@
+<!DOCTYPE html>
+<html lang="zh" xmlns:th="http://www.thymeleaf.org">
+    <head>
+        <meta charset="UTF-8"/>
+        <title>激活验证</title>
+    </head>
+    <body>
+        <h4 th:text="|尊敬的${username} 用户：|"></h4><br /><br />
+        <p>&nbsp;&nbsp;请点击下面的链接完成验证。</p><br/>
+        <a href="#" th:href="@{ http://www.address.com/user/{id}(id=${id}) }">激活账号</a><br>
+        <p>&nbsp;&nbsp;本邮件为自动邮件，请勿回复。</p>
+    </body>
+</html>
