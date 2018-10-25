@@ -1,7 +1,8 @@
 package com.fallensouls.messageservice.enums;
 
 public enum TemplateCodeEnum {
-    NOT_USE("不使用模板", 0);
+    NOT_USE("不使用模板", 0),
+    TEST("使用测试模板",1);
 
     private String desc;
     private int code;
@@ -14,4 +15,5 @@ public enum TemplateCodeEnum {
     public int getCode() {
         return code;
     }
+
 }

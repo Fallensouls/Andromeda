@@ -1,7 +1,7 @@
 package com.fallensouls.messageservice.service.mailservice;
 
 import com.fallensouls.messageservice.enums.TemplateCodeEnum;
-import com.fallensouls.messageservice.exception.ArgumentErrorException;
+import com.fallensouls.messageservice.exception.MessageException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -17,7 +17,6 @@ import org.thymeleaf.context.Context;
 import javax.mail.MessagingException;
 import javax.mail.internet.MimeMessage;
 import java.io.File;
-import java.util.List;
 import java.util.Map;
 
 @Component
@@ -38,8 +37,9 @@ public class MailServiceImpl implements MailService {
      * @param templateCodeEnum
      * @param contentmap
      * @return
+     * @throws Exception
      */
-    public String createEmailContent(TemplateCodeEnum templateCodeEnum, Map<String, String>contentmap){
+    public String createEmailContent(TemplateCodeEnum templateCodeEnum, Map<String, String>contentmap)throws Exception{
         //创建邮件正文
         Context context = new Context();
         for(Map.Entry<String, String> entry : contentmap.entrySet()){
@@ -63,9 +63,9 @@ public class MailServiceImpl implements MailService {
         message.setText(content);
         try {
             mailSender.send(message);
-            logger.info("简单邮件已经发送。");
+            logger.info("成功向{}发送简单邮件", to);
         } catch (Exception e) {
-            logger.error("发送简单邮件时发生异常,异常信息为:{}", e.getMessage());
+            logger.error("发送简单邮件至{}时发生异常,异常信息为:{}", to, e.getMessage());
         }
     }
 
@@ -74,9 +74,10 @@ public class MailServiceImpl implements MailService {
      * @param to
      * @param subject
      * @param content
+     * @throws MessageException
      */
     @Override
-    public void sendHtmlMail(String to, String subject, String content) {
+    public void sendHtmlMail(String to, String subject, String content) throws MessageException {
         MimeMessage message = mailSender.createMimeMessage();
         try {
             //true表示需要创建一个multipart message
@@ -86,9 +87,10 @@ public class MailServiceImpl implements MailService {
             helper.setSubject(subject);
             helper.setText(content, true);
             mailSender.send(message);
-            logger.info("html邮件发送成功");
+            logger.info("成功向{}发送html邮件", to);
         } catch (MessagingException e) {
-            logger.error("发送html邮件时发生异常,异常信息为:{}", e.getMessage());
+            logger.error("发送html邮件至{}时发生异常,异常信息为:{}", to, e.getMessage());
+            throw new MessageException("发送html邮件失败");
         }
     }
 
@@ -99,8 +101,9 @@ public class MailServiceImpl implements MailService {
      * @param subject
      * @param content
      * @param filePath
+     * @throws MessageException
      */
-    public void sendAttachmentsMail(String to, String subject, String content, String filePath){
+    public void sendAttachmentsMail(String to, String subject, String content, String filePath) throws MessageException{
         MimeMessage message = mailSender.createMimeMessage();
         try {
             MimeMessageHelper helper = new MimeMessageHelper(message, true);
@@ -113,9 +116,10 @@ public class MailServiceImpl implements MailService {
             helper.addAttachment(fileName, file);
             //helper.addAttachment("test"+fileName, file);
             mailSender.send(message);
-            logger.info("带附件的邮件已经发送。");
+            logger.info("成功向{}发送带附件的邮件", to);
         } catch (MessagingException e) {
-            logger.error("发送带附件的邮件时发生异常,异常信息为:{}", e.getMessage());
+            logger.error("发送带附件的邮件至{}时发生异常,异常信息为:{}", to, e.getMessage());
+            throw new MessageException("发送带附件的邮件失败");
         }
     }
 
@@ -126,8 +130,9 @@ public class MailServiceImpl implements MailService {
      * @param content
      * @param rscPath
      * @param rscId
+     * @throws MessageException
      */
-    public void sendInlineResourceMail(String to, String subject, String content, String rscPath, String rscId){
+    public void sendInlineResourceMail(String to, String subject, String content, String rscPath, String rscId) throws MessageException{
         MimeMessage message = mailSender.createMimeMessage();
         try {
             MimeMessageHelper helper = new MimeMessageHelper(message, true);
@@ -138,9 +143,10 @@ public class MailServiceImpl implements MailService {
             FileSystemResource res = new FileSystemResource(new File(rscPath));
             helper.addInline(rscId, res);
             mailSender.send(message);
-            logger.info("嵌入静态资源的邮件已经发送。");
+            logger.info("嵌入静态资源的邮件已经发送至{}", to);
         } catch (MessagingException e) {
-            logger.error("发送嵌入静态资源的邮件时发生异常,异常信息为:{}", e.getMessage());
+            logger.error("向{}发送嵌入静态资源的邮件时发生异常,异常信息为:{}", to, e.getMessage());
+            throw new MessageException("发送带有静态资源的邮件失败");
         }
     }
 }

@@ -1,10 +1,10 @@
 package com.fallensouls.messageservice.exception;
 
-public class ArgumentErrorException extends Exception {
+public class MessageException extends Exception {
 //    private int code;
     private String message;
 
-    public ArgumentErrorException(String message){
+    public MessageException(String message){
         super(message);
 //        this.code = code;
     }
