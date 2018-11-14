@@ -38,6 +38,9 @@ public class UserControllerTest extends UserServiceApplicationTests {
 
     @Test
     public void getUserListTest() throws Exception{
+//        for(int i = 0; i < 20; i++){
+//            addUserTest();
+//        }
         mvc.perform(MockMvcRequestBuilders.get("/user"))
                 .andExpect(MockMvcResultMatchers.status().isOk())
                 .andDo(MockMvcResultHandlers.print());
@@ -82,6 +85,12 @@ public class UserControllerTest extends UserServiceApplicationTests {
 
     @Test
     public void deleteUserTest() throws Exception{
+        mvc.perform(MockMvcRequestBuilders.delete("/user/cc2c04a8-5b79-4061-8608-23f739fe3124"))
+                .andExpect(MockMvcResultMatchers.status().isOk());
+    }
+
+    @Test
+    public void lockUserTest() throws Exception{
         mvc.perform(MockMvcRequestBuilders.delete("/user/cc2c04a8-5b79-4061-8608-23f739fe3124"))
                 .andExpect(MockMvcResultMatchers.status().isOk());
     }

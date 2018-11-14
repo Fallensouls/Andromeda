@@ -4,13 +4,17 @@ import com.fallensouls.userservice.domain.User;
 import com.fallensouls.userservice.exception.SaveUserDetailsFailureException;
 import com.fallensouls.userservice.exception.UserNotFoundException;
 import com.fallensouls.userservice.repository.UserRepository;
+import com.fallensouls.userservice.vo.UserPageVO;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
-import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
@@ -23,9 +27,15 @@ public class UserController {
     private UserRepository userRepository;
 
     @GetMapping
-    public List<User> findAllUser(){
-        log.info("正在查询所有用户信息");
-        return userRepository.findAll();
+    public UserPageVO findUserByPage(@RequestParam(value = "page", required = false, defaultValue = "0") int page,
+                                     @RequestParam(value = "offset", required = false, defaultValue = "20") int offset,
+                                     @RequestParam(value = "order", required = false, defaultValue = "true") boolean desc,
+                                     @RequestParam(value = "orderby", required = false, defaultValue = "username") String orderby){
+        Sort.Direction direction = desc? Sort.Direction.DESC : Sort.Direction.ASC;
+        Pageable pageable = PageRequest.of(page, offset, direction, orderby);
+        log.info("正在查询所要求的用户信息");
+        Page<User> userPage = userRepository.findAll(pageable);
+        return new UserPageVO(userPage.getTotalElements(), userPage.getTotalPages(), userPage.getContent());
     }
 
     @GetMapping("/{id}")
@@ -64,9 +74,15 @@ public class UserController {
         userRepository.save(user);
     }
 
+//    @DeleteMapping("/{id}")
+//    public void deleteUser(@PathVariable String id){
+//        log.info("删除id为:{}的用户", id);
+//        userRepository.deleteById(UUID.fromString(id));
+//    }
+
     @DeleteMapping("/{id}")
-    public void deleteUser(@PathVariable String id){
-        log.info("删除id为:{}的用户", id);
-        userRepository.deleteById(UUID.fromString(id));
+    public void lockUser(@PathVariable String id){
+        log.info("锁定id为:{}的用户", id);
+        userRepository.lockUserById(UUID.fromString(id));
     }
 }
