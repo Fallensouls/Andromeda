@@ -11,6 +11,7 @@ import javax.persistence.*;
 import javax.validation.constraints.Email;
 import javax.validation.constraints.Pattern;
 import java.util.Date;
+import java.util.List;
 import java.util.UUID;
 
 @Data
@@ -30,7 +31,6 @@ public class User {
     private String telphone;
     @Email(message = "邮件地址必须符合格式")
     private String email;
-//    private short rowstate = 0;  //定义默认值为0
     @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss",timezone = "GMT+8")
     @CreatedDate
     private Date crtdate; //创建日期
@@ -41,5 +41,8 @@ public class User {
     private Date lastlogin; //最后登录时间
 
     private boolean islocked; // 账号是否被锁定
+    @OneToMany
+    private List<String> authority;  // 用户的权限
+
 
 }

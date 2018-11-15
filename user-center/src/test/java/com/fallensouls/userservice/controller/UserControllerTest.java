@@ -17,8 +17,7 @@ import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 import org.springframework.web.context.WebApplicationContext;
 
 import javax.transaction.Transactional;
-import java.util.Date;
-import java.util.UUID;
+import java.util.*;
 
 @Transactional
 @Rollback
@@ -62,6 +61,7 @@ public class UserControllerTest extends UserServiceApplicationTests {
         user.setEmail("ddsfsf@14533.com");
         user.setIslocked(false);
         user.setLastlogin(new Date());
+        user.setAuthority(Collections.singletonList("ROLE_ADMIN"));
         ObjectMapper mapper = new ObjectMapper();
 
         mvc.perform(MockMvcRequestBuilders.post("/user")
