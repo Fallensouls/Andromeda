@@ -37,9 +37,6 @@ public class UserControllerTest extends UserServiceApplicationTests {
 
     @Test
     public void getUserListTest() throws Exception{
-//        for(int i = 0; i < 20; i++){
-//            addUserTest();
-//        }
         mvc.perform(MockMvcRequestBuilders.get("/user"))
                 .andExpect(MockMvcResultMatchers.status().isOk())
                 .andDo(MockMvcResultHandlers.print());
@@ -61,7 +58,7 @@ public class UserControllerTest extends UserServiceApplicationTests {
         user.setEmail("ddsfsf@14533.com");
         user.setIslocked(false);
         user.setLastlogin(new Date());
-        user.setAuthority(Collections.singletonList("ROLE_ADMIN"));
+        user.setRole("ROLE_ADMIN");
         ObjectMapper mapper = new ObjectMapper();
 
         mvc.perform(MockMvcRequestBuilders.post("/user")

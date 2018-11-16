@@ -11,7 +11,6 @@ import javax.persistence.*;
 import javax.validation.constraints.Email;
 import javax.validation.constraints.Pattern;
 import java.util.Date;
-import java.util.List;
 import java.util.UUID;
 
 @Data
@@ -41,8 +40,8 @@ public class User {
     private Date lastlogin; //最后登录时间
 
     private boolean islocked; // 账号是否被锁定
-    @OneToMany
-    private List<String> authority;  // 用户的权限
+
+    private String role;  // 用户的角色
 
 
 }
