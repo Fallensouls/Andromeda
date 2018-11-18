@@ -1,13 +1,13 @@
 package com.fallensouls.messageservice.service.mailservice;
 
-import com.fallensouls.messageservice.enums.TemplateCodeEnum;
+import com.fallensouls.messageservice.enums.Email.MailTemplate;
 import com.fallensouls.messageservice.exception.MessageException;
 
 import java.util.Map;
 
 public interface MailService {
 
-    String createEmailContent(TemplateCodeEnum templateCodeEnum, Map<String, String> contentmap) throws Exception;
+    String createEmailContent(MailTemplate mailTemplate, Map<String, String> contentmap) throws Exception;
 
     void sendSimpleMail(String to, String subject, String content);
 

@@ -1,6 +1,6 @@
 package com.fallensouls.messageservice.service.mailservice;
 
-import com.fallensouls.messageservice.enums.TemplateCodeEnum;
+import com.fallensouls.messageservice.enums.Email.MailTemplate;
 import com.fallensouls.messageservice.exception.MessageException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -34,18 +34,18 @@ public class MailServiceImpl implements MailService {
 
     /**
      * 根据模板代号创建相应的邮件内容
-     * @param templateCodeEnum
+     * @param mailTemplate
      * @param contentmap
      * @return
      * @throws Exception
      */
-    public String createEmailContent(TemplateCodeEnum templateCodeEnum, Map<String, String>contentmap)throws Exception{
+    public String createEmailContent(MailTemplate mailTemplate, Map<String, String>contentmap)throws Exception{
         //创建邮件正文
         Context context = new Context();
         for(Map.Entry<String, String> entry : contentmap.entrySet()){
             context.setVariable(entry.getKey(), entry.getValue());
         }
-         return templateEngine.process("emailTemplate" + templateCodeEnum.getCode(), context);
+         return templateEngine.process(mailTemplate.getTemplateName(), context);
     }
 
     /**
