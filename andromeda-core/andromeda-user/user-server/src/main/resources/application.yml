@@ -1,0 +1,17 @@
+spring:
+  application:
+    name: userservice
+  profiles:
+    active: dev
+  datasource:
+    username: postgres
+    url: jdbc:postgresql://localhost:5432/usercenter?useUnicode=true&amp;characterEncoding=UTF-8
+    driver-class-name: org.postgresql.Driver
+    password: fallensouls
+  jpa:
+    show-sql: true
+    database: postgresql
+    properties.hibernate.temp.use_jdbc_metadata_defaults: false
+
+server:
+  port: 8080
