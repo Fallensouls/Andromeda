@@ -1,8 +1,6 @@
 package com.fallensouls.messageservice.controller;
 
-import com.aliyuncs.exceptions.ClientException;
-import com.fallensouls.messageservice.exception.ArgumentNotValidException;
-import com.fallensouls.messageservice.exception.MessageException;
+import com.fallensouls.messageservice.exception.RequestNotValidException;
 import com.fallensouls.messageservice.request.EmailRequest;
 import com.fallensouls.messageservice.request.SmsRequest;
 import com.fallensouls.messageservice.service.MessageService;
@@ -26,10 +24,10 @@ public class MessageController {
 
     @RequestMapping(value = "/send/email", method = RequestMethod.POST)
     public void SendEmail(@RequestBody @Valid EmailRequest emailRequest,
-                            BindingResult bindingResult)throws MessageException,ArgumentNotValidException {
+                            BindingResult bindingResult)throws RequestNotValidException {
         if(bindingResult.hasErrors()){
             log.error("emailRequest参数有误：{}", bindingResult.getFieldError().getDefaultMessage());
-            throw new ArgumentNotValidException("emailRequest参数校验失败");
+            throw new RequestNotValidException("emailRequest参数校验失败");
         }
         log.info("邮件发送中...");
         messageService.sendEmail(emailRequest);
@@ -37,10 +35,10 @@ public class MessageController {
 
     @RequestMapping(value = "/send/sms", method = RequestMethod.POST)
     public void SendSms(@RequestBody @Valid SmsRequest smsRequset,
-                            BindingResult bindingResult)throws ClientException,ArgumentNotValidException {
+                            BindingResult bindingResult)throws RequestNotValidException {
         if(bindingResult.hasErrors()){
             log.error("smsRequest参数有误：{}", bindingResult.getFieldError().getDefaultMessage());
-            throw new ArgumentNotValidException("smsRequest参数校验失败");
+            throw new RequestNotValidException("smsRequest参数校验失败");
         }
         log.info("短信发送中...");
         messageService.sendSms(smsRequset);

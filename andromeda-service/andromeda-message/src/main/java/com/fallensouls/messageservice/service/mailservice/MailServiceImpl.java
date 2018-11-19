@@ -35,14 +35,14 @@ public class MailServiceImpl implements MailService {
     /**
      * 根据模板代号创建相应的邮件内容
      * @param mailTemplate
-     * @param contentmap
+     * @param content
      * @return
      * @throws Exception
      */
-    public String createEmailContent(MailTemplate mailTemplate, Map<String, String>contentmap)throws Exception{
+    public String createEmailContent(MailTemplate mailTemplate, Map<String, String>content)throws Exception{
         //创建邮件正文
         Context context = new Context();
-        for(Map.Entry<String, String> entry : contentmap.entrySet()){
+        for(Map.Entry<String, String> entry : content.entrySet()){
             context.setVariable(entry.getKey(), entry.getValue());
         }
          return templateEngine.process(mailTemplate.getTemplateName(), context);
@@ -74,10 +74,9 @@ public class MailServiceImpl implements MailService {
      * @param to
      * @param subject
      * @param content
-     * @throws MessageException
      */
     @Override
-    public void sendHtmlMail(String to, String subject, String content) throws MessageException {
+    public void sendHtmlMail(String to, String subject, String content) {
         MimeMessage message = mailSender.createMimeMessage();
         try {
             //true表示需要创建一个multipart message
@@ -90,7 +89,7 @@ public class MailServiceImpl implements MailService {
             logger.info("成功向{}发送html邮件", to);
         } catch (MessagingException e) {
             logger.error("发送html邮件至{}时发生异常,异常信息为:{}", to, e.getMessage());
-            throw new MessageException("发送html邮件失败");
+//            throw new MessageException("发送html邮件失败");
         }
     }
 
@@ -101,9 +100,8 @@ public class MailServiceImpl implements MailService {
      * @param subject
      * @param content
      * @param filePath
-     * @throws MessageException
      */
-    public void sendAttachmentsMail(String to, String subject, String content, String filePath) throws MessageException{
+    public void sendAttachmentsMail(String to, String subject, String content, String[] filePath) {
         MimeMessage message = mailSender.createMimeMessage();
         try {
             MimeMessageHelper helper = new MimeMessageHelper(message, true);
@@ -111,15 +109,17 @@ public class MailServiceImpl implements MailService {
             helper.setTo(to);
             helper.setSubject(subject);
             helper.setText(content, true);
-            FileSystemResource file = new FileSystemResource(new File(filePath));
-            String fileName = filePath.substring(filePath.lastIndexOf(File.separator));
-            helper.addAttachment(fileName, file);
+            for (String path : filePath) {
+                FileSystemResource file = new FileSystemResource(new File(path));
+                String fileName = path.substring(path.lastIndexOf(File.separator));
+                helper.addAttachment(fileName, file);
+            }
             //helper.addAttachment("test"+fileName, file);
             mailSender.send(message);
             logger.info("成功向{}发送带附件的邮件", to);
         } catch (MessagingException e) {
             logger.error("发送带附件的邮件至{}时发生异常,异常信息为:{}", to, e.getMessage());
-            throw new MessageException("发送带附件的邮件失败");
+//            throw new MessageException("发送带附件的邮件失败");
         }
     }
 
@@ -128,11 +128,9 @@ public class MailServiceImpl implements MailService {
      * @param to
      * @param subject
      * @param content
-     * @param rscPath
-     * @param rscId
-     * @throws MessageException
+     * @param resource
      */
-    public void sendInlineResourceMail(String to, String subject, String content, String rscPath, String rscId) throws MessageException{
+    public void sendInlineResourceMail(String to, String subject, String content, Map<String, String> resource) {
         MimeMessage message = mailSender.createMimeMessage();
         try {
             MimeMessageHelper helper = new MimeMessageHelper(message, true);
@@ -140,13 +138,15 @@ public class MailServiceImpl implements MailService {
             helper.setTo(to);
             helper.setSubject(subject);
             helper.setText(content, true);
-            FileSystemResource res = new FileSystemResource(new File(rscPath));
-            helper.addInline(rscId, res);
+            for(Map.Entry<String, String> res : resource.entrySet()){
+                FileSystemResource file = new FileSystemResource(new File(res.getValue()));
+                helper.addInline(res.getKey(), file);
+            }
             mailSender.send(message);
             logger.info("嵌入静态资源的邮件已经发送至{}", to);
         } catch (MessagingException e) {
             logger.error("向{}发送嵌入静态资源的邮件时发生异常,异常信息为:{}", to, e.getMessage());
-            throw new MessageException("发送带有静态资源的邮件失败");
+//            throw new MessageException("发送带有静态资源的邮件失败");
         }
     }
 }

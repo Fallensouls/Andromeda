@@ -9,6 +9,7 @@ import com.aliyuncs.dysmsapi.model.v20170525.SendSmsResponse;
 import com.aliyuncs.exceptions.ClientException;
 import com.aliyuncs.profile.DefaultProfile;
 import com.aliyuncs.profile.IClientProfile;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
 
 import java.text.SimpleDateFormat;
@@ -26,6 +27,7 @@ import java.util.Date;
  * 国际短信发送请勿参照此DEMO
  */
 @Component
+@Slf4j
 public class Sms {
 
     //产品名称:云通信短信API产品,开发者无需替换
@@ -38,16 +40,22 @@ public class Sms {
     static final String accessKeySecret = "sdfjksdfjsldjfd";
 
     public SendSmsResponse sendSms(String PhoneNumbers, String SignName, String TemplateCode,
-                                   String... args) throws ClientException {
+                                   String... args)  {
 
         //可自助调整超时时间
         System.setProperty("sun.net.client.defaultConnectTimeout", "10000");
         System.setProperty("sun.net.client.defaultReadTimeout", "10000");
 
         //初始化acsClient,暂不支持region化
-        IClientProfile profile = DefaultProfile.getProfile("cn-hangzhou", accessKeyId, accessKeySecret);
-        DefaultProfile.addEndpoint("cn-hangzhou", "cn-hangzhou", product, domain);
-        IAcsClient acsClient = new DefaultAcsClient(profile);
+        IAcsClient acsClient;
+        try {
+            IClientProfile profile = DefaultProfile.getProfile("cn-hangzhou", accessKeyId, accessKeySecret);
+            DefaultProfile.addEndpoint("cn-hangzhou", "cn-hangzhou", product, domain);
+            acsClient = new DefaultAcsClient(profile);
+        }catch (ClientException e){
+            log.error("初始化acsClient失败,错误信息为:{}！", e.getMessage());
+            return null;
+        }
 
         //组装请求对象-具体描述见控制台-文档部分内容
         SendSmsRequest request = new SendSmsRequest();
@@ -69,8 +77,12 @@ public class Sms {
         request.setOutId("yourOutId");
 
         //hint 此处可能会抛出异常，注意catch
-        SendSmsResponse sendSmsResponse = acsClient.getAcsResponse(request);
-
+        SendSmsResponse sendSmsResponse = null;
+        try {
+            sendSmsResponse = acsClient.getAcsResponse(request);
+        }catch (Exception e){
+            log.error("发送短信过程中出现异常:{}", e.getMessage());
+        }
         return sendSmsResponse;
     }
 

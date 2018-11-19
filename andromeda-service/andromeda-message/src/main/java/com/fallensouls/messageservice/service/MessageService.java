@@ -1,10 +1,9 @@
 package com.fallensouls.messageservice.service;
 
-import com.aliyuncs.exceptions.ClientException;
+import com.aliyuncs.dysmsapi.model.v20170525.SendSmsResponse;
 import com.fallensouls.messageservice.enums.Email.MailTemplate;
 import com.fallensouls.messageservice.request.EmailRequest;
-import com.fallensouls.messageservice.exception.ArgumentNotValidException;
-import com.fallensouls.messageservice.exception.MessageException;
+import com.fallensouls.messageservice.exception.RequestNotValidException;
 import com.fallensouls.messageservice.request.SmsRequest;
 import com.fallensouls.messageservice.service.mailservice.MailService;
 import com.fallensouls.messageservice.service.sms.Sms;
@@ -24,34 +23,41 @@ public class MessageService {
     @Autowired
     private Sms sms;
 
-    public void sendEmail(EmailRequest emailRequest)throws MessageException,ArgumentNotValidException{
+    public void sendEmail(EmailRequest emailRequest)throws RequestNotValidException {
         String to = emailRequest.getTo();
         String subject = emailRequest.getSubject();
-        String content = emailRequest.getContent();
         MailTemplate mailTemplate = emailRequest.getMailTemplate();
-        Map<String, String> contentmap = emailRequest.getContentmap();
+        Map<String, String> contentMap = emailRequest.getContent();
+        String content = "欢迎使用邮件服务！";
         if(mailTemplate != MailTemplate.NOT_USE){
             try {
-                content = mailService.createEmailContent(mailTemplate, contentmap);
+                content = mailService.createEmailContent(mailTemplate, contentMap);
             }catch (Exception e){
-                log.error("填充模板失败,模板名称:{},填充内容:{}", mailTemplate.getTemplateName(), Arrays.toString(contentmap.entrySet().toArray()));
-                throw new MessageException("填充模板失败!");
+                log.error("填充模板失败,模板名称:{},填充内容:{}", mailTemplate.getTemplateName(), Arrays.toString(contentMap.entrySet().toArray()));
+                return;
             }
         }
         switch (emailRequest.getMailType()){
             case HTML_MAIL:
                 mailService.sendHtmlMail(to, subject, content);
             case ATTACHMENT_MAIL:
-//                mailService.sendAttachmentsMail(to, subject, content);
+                String[] path = new String[emailRequest.getFilePath().size()];
+                emailRequest.getFilePath().toArray(path);
+                mailService.sendAttachmentsMail(to, subject, content, path);
             case INLINE_MAIL:
-//                mailService.sendInlineResourceMail(to, subject, content);
+                mailService.sendInlineResourceMail(to, subject, content, emailRequest.getResource());
             default:
                 log.error("邮件类型产生异常:{}",emailRequest.getMailType());
-                throw new ArgumentNotValidException("指定的邮件类型有误");
+                throw new RequestNotValidException("指定的邮件类型有误");
         }
     }
 
-    public void sendSms(SmsRequest smsRequest) throws ClientException {
-        sms.sendSms(smsRequest.getPhoneNumbers(), smsRequest.getSignName(), smsRequest.getSmsTemplate().getCode());
+    public void sendSms(SmsRequest smsRequest) {
+        SendSmsResponse response = sms.sendSms(smsRequest.getPhoneNumbers(), smsRequest.getSignName(), smsRequest.getSmsTemplate().getCode());
+        if(response == null){
+            log.error("发送短信失败！");
+        }else {
+            log.info("发送短信返回的响应为: {}", response.getMessage());
+        }
     }
 }
